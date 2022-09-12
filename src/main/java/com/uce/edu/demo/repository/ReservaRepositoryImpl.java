@@ -4,10 +4,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.springframework.stereotype.Repository;
 
+import com.uce.edu.demo.repository.modelo.Cliente;
 import com.uce.edu.demo.repository.modelo.Reserva;
+import com.uce.edu.demo.repository.modelo.Vehiculo;
 
 @Repository
 @Transactional
@@ -42,10 +45,12 @@ public class ReservaRepositoryImpl implements IReservaRepository {
 	}
 
 	@Override
+	@Transactional(value = TxType.NOT_SUPPORTED)
 	public Reserva buscarNumero(String numero) {
 		TypedQuery<Reserva> myQuery=this.entityManager.createQuery("Select r from Reserva r where r.numero=:valor", Reserva.class);
 		myQuery.setParameter("valor", numero);
 		return myQuery.getSingleResult();
 	}
 
+	
 }

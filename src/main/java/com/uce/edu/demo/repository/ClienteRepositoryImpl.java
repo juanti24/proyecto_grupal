@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +45,7 @@ public class ClienteRepositoryImpl implements IClienteRepository {
 	}
 
 	@Override
+	@Transactional(value = TxType.NOT_SUPPORTED)
 	public Cliente buscarPorCedula(String cedula) {
 		TypedQuery<Cliente> myQuery = this.entityManager
 				.createQuery("SELECT c FROM Cliente c WHERE c.cedula=:datoCedula", Cliente.class);
@@ -52,6 +54,7 @@ public class ClienteRepositoryImpl implements IClienteRepository {
 	}
 
 	@Override
+	@Transactional(value = TxType.NOT_SUPPORTED)
 	public List<Cliente> buscarTodosClientes() {
 		TypedQuery<Cliente> myQuery = this.entityManager.createQuery("Select c from Cliente c", Cliente.class);
 		return myQuery.getResultList();
@@ -59,6 +62,7 @@ public class ClienteRepositoryImpl implements IClienteRepository {
 	}
 
 	@Override
+	@Transactional(value = TxType.NOT_SUPPORTED)
 	public List<Cliente> buscarClientesPorApellido(String apellido) {
 		TypedQuery<Cliente> myQuery = this.entityManager.createQuery("Select c from Cliente c WHERE c.apellido=: dato1",
 				Cliente.class);

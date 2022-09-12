@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,7 @@ import com.uce.edu.demo.repository.modelo.Cliente;
 import com.uce.edu.demo.repository.modelo.Cobro;
 import com.uce.edu.demo.repository.modelo.Reserva;
 import com.uce.edu.demo.repository.modelo.Vehiculo;
+import com.uce.edu.demo.repository.modelo.VehiculoVip;
 
 @Service
 public class GestorClienteServiceImpl implements IGestorClienteService {
@@ -22,11 +26,12 @@ public class GestorClienteServiceImpl implements IGestorClienteService {
 
 	@Autowired
 	private IVehiculoService vehiculoService;
-	
+
 	@Autowired
 	private IReservaService ireservaService;
 
 	@Override
+	@Transactional
 	public BigDecimal calcularPagoVehiculo(String placa, String cedula, LocalDateTime fechaInicio,
 			LocalDateTime fechaFinal) {
 		Vehiculo vehiculo = this.vehiculoService.buscarPorPlaca(placa);
@@ -40,11 +45,12 @@ public class GestorClienteServiceImpl implements IGestorClienteService {
 		BigDecimal valorsubTotal = vehiculo.getValorPorDia().multiply(new BigDecimal(dias));
 		BigDecimal valorIVA = valorsubTotal.multiply(new BigDecimal(0.12));
 		BigDecimal valorTotal = valorsubTotal.add(valorIVA);
-		
+
 		return valorTotal;
 	}
 
 	@Override
+	@Transactional(value = TxType.NOT_SUPPORTED)
 	public boolean verFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin, LocalDateTime fechaInicio2,
 			LocalDateTime fechaFin2) {
 		if (fechaInicio.isEqual(fechaInicio2)) {
@@ -61,40 +67,39 @@ public class GestorClienteServiceImpl implements IGestorClienteService {
 	@Override
 	public Reserva reservarVehiculo(String placa, String cedula, LocalDateTime fechaInicio, LocalDateTime fechaFinal,
 			String numeroTarjeta) {
-		
+
 		Vehiculo vehiculo = this.vehiculoService.buscarPorPlaca(placa);
 		Duration duracion = Duration.between(fechaInicio, fechaFinal);
 		long diasi = duracion.toDays();
 		long dias = diasi + 1;
-		
-		
+
 		Cliente cliente = this.clienteService.buscarPorCedula(cedula);
 
-		
 		BigDecimal valorsubTotal = vehiculo.getValorPorDia().multiply(new BigDecimal(dias));
 		BigDecimal valorIVA = valorsubTotal.multiply(new BigDecimal(0.12));
 		BigDecimal valorTotal = valorsubTotal.add(valorIVA);
 
 		List<Reserva> reservasCliente = cliente.getReserva();
-		if(reservasCliente==null) {
-			reservasCliente=new ArrayList<>();
+		if (reservasCliente == null) {
+			reservasCliente = new ArrayList<>();
 		}
 		Reserva reserva = new Reserva();
 		reserva.setCliente(cliente);
-		reserva.setEstado("G"); // generada
+		reserva.setEstado("G");
 		reserva.setFechaFin(fechaFinal);
 		reserva.setFechaInicio(fechaInicio);
 		reserva.setVehiculo(vehiculo);
-		this.ireservaService.insertar(reserva);;
+		this.ireservaService.insertar(reserva);
+
 		List<Reserva> reservaVehiculo = vehiculo.getReservas();
-		if(reservaVehiculo==null) {
-			reservaVehiculo=new ArrayList<>();
+		if (reservaVehiculo == null) {
+			reservaVehiculo = new ArrayList<>();
 		}
 		reservaVehiculo.add(reserva);
-		
+
 		vehiculo.setReservas(reservaVehiculo);
 		vehiculo.setFechaDisponibilidad(fechaFinal);
-		
+
 		this.vehiculoService.actualizar(vehiculo);
 
 		reservasCliente.add(reserva);
@@ -110,9 +115,13 @@ public class GestorClienteServiceImpl implements IGestorClienteService {
 		cobro.setValorTotalPagar(valorTotal);
 
 		reserva.setCobro(cobro);
-		
+
 		reserva.setNumero("000" + reserva.getId());
-		this.ireservaService.actualizar(reserva);;
+		this.ireservaService.actualizar(reserva);
+
 		return reserva;
 	}
+	
+	
+	
 }

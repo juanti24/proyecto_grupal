@@ -13,5 +13,7 @@ public interface IReservaRepository {
 	public void eliminar(Integer id);
 	
 	public Reserva buscarNumero(String numero);
+	
+	
 
 }

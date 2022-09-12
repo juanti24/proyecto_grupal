@@ -27,8 +27,6 @@ public class ClienteController {
 	@Autowired
 	private IVehiculoService vehiculoService;
 	
-	
-	
 	@Autowired
 	private IGestorClienteService igestorClienteService;
 	
@@ -65,7 +63,6 @@ public class ClienteController {
 		Vehiculo vehiculoBuscar = this.vehiculoService.buscarPorPlaca(reserva.getVehiculo().getPlaca());
 		BigDecimal valorTotal=this.igestorClienteService.calcularPagoVehiculo(reserva.getVehiculo().getPlaca(),
 				reserva.getCliente().getCedula(), reserva.getFechaInicio(), reserva.getFechaFin());
-		//LOG.info("valor total "+ valorTotal);
 		Cobro cobro=new Cobro();
 		cobro.setValorTotalPagar(valorTotal);
 		reserva.setCobro(cobro);
@@ -73,24 +70,15 @@ public class ClienteController {
 		
 		List<Reserva> reservasVehiculo = vehiculoBuscar.getReservas();
 		if (reservasVehiculo == null || reservasVehiculo.isEmpty()) {
-			//String mensaje="Vehiculo Disponible, Valor total a Pagar $"+valorTotal;
-			//redirect.addFlashAttribute("mensaje", mensaje );
-			//LOG.info("Vehiculo Disponible, Valor total a Pagar "+valorTotal.toString());
 			return "cliente/pagarVehiculo";
 		} else {
 			for (Reserva r : reservasVehiculo) {
 				if (this.igestorClienteService.verFechas(reserva.getFechaInicio(), reserva.getFechaFin(),
 						r.getFechaInicio(), r.getFechaFin())) {
-					
-					//redirect.addFlashAttribute("mensaje", "Fechas Solapadas, elija otras fechas");
-					//LOG.info("Fechas Solapadas, elija otras fechas"); 
 					return "cliente/reservarBuscarVehiculo"; 
 					
 				}
 			}
-			//String mensaje="Vehiculo Disponible, Valor total a Pagar $"+valorTotal;
-			//redirect.addFlashAttribute("mensaje", mensaje);
-			//LOG.info("Vehiculo Disponible, Valor total a Pagar "+valorTotal.toString());
 			 return "cliente/pagarVehiculo";
 		}
 

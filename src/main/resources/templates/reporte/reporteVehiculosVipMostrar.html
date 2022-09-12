@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link th:href="@{/css/misprimerosestilos.css}" rel="stylesheet">
+	 <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="../css/misprimerosestilos.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>Reporte Vehículos VIP</h1>
+<div class="table table-dark table-striped"> 
+<table>
+	<!--Para tablas dimanicas-->
+	<!--cabecera tabla-->
+	<thead>
+		<tr>
+			<th>Valor total</th>
+			<th>Valor subtotal</th>
+			<th>Placa</th>
+			<th>Modelo</th>
+			<th>Marca</th>
+			<th>Año de fabricación</th>
+			<th>Valor por día</th>
+			
+		</tr>
+	</thead>
+	<!--cuerpo tabla-->
+	<tbody>
+		<tr th:each="listaVechiculoVIP:${listaVechiculoVIP}">
+		
+			<td th:text="${listaVechiculoVIP.valorTotal}" ></td>
+			<td th:text="${listaVechiculoVIP.valorSubTotal}" ></td>
+			<td th:text="${listaVechiculoVIP.placa}" ></td>
+			<td th:text="${listaVechiculoVIP.modelo}" ></td>
+			<td th:text="${listaVechiculoVIP.marca}" ></td>
+			<td th:text="${listaVechiculoVIP.anioFabricacion}" ></td>
+			<td th:text="${listaVechiculoVIP.valorPorDia}" ></td>
+		<tr>
+	</tbody>
+</table>
+</div>
+</body>
+
+</html>

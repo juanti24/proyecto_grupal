@@ -52,7 +52,7 @@ public class Reserva {
 	@OneToOne( cascade = CascadeType.ALL)
 	@JoinColumn(name="rese_fk_cobro")
 	private Cobro cobro;
-
+	
 	//SET Y GET
 	public Integer getId() {
 		return id;

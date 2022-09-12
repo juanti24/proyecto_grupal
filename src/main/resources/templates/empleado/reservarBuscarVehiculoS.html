@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="../css/misprimerosestilos.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+	<div class="alert alert-danger" role="alert" th:if="${mensaje!=null}" th:text="${mensaje}"> </div>
+	<div th:if="${reserva!=null} AND ${reserva.cobro!=null}">
+		<h3> fechas solapadas</h3>
+	</div>
+	<h1>Reservar vehículo</h1>
+	<form th:action="@{/empleados/verificarVehiculo}" th:object="${reserva}" method="get">
+		<div class="table table-dark table-striped">
+			<table>
+				<tr>
+					<td>
+						<label class="col-form-label">Placa:</label>
+					</td>
+					<td>
+						<input class="form-control" type="text" id="placa" th:field="*{vehiculo.placa}">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Cedula:</label>
+					</td>
+					<td>
+						<input class="form-control" type="text" id="cedula" th:field="*{cliente.cedula}">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Fecha inicio:</label>
+					</td>
+					<td>
+						<input class="form-control" type="datetime-local" id="fechai" th:field="*{fechaInicio}">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Fecha fin:</label>
+					</td>
+					<td>
+						<input class="form-control" type="datetime-local" id="fechaf" th:field="*{fechaFin}">
+					</td>
+				</tr>
+				<tr>
+				</tr>
+			</table>
+		</div>
+		<input class="btn btn-outline-dark" type="submit" value="Reservar">
+	</form>
+
+
+</body>
+
+</html>

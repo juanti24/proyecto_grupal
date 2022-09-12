@@ -24,6 +24,9 @@
 					<th>Fecha inicio</th>
 					<th>Fecha fin</th>
 					<th>Reservado por</th>
+					<th>SubTotal</th>
+					<th>IVA</th>
+					<th>Valor total </th>
 					
 				</tr>
 			</thead>
@@ -37,6 +40,9 @@
 					<td th:text="${reservaR.fechaInicio}"></td>
 					<td th:text="${reservaR.fechaFin}"></td>
 					<td th:text="${reservaR.cliente.cedula}" ></td>
+					<td th:text="${#numbers.formatDecimal(reservaR.cobro.valorSubtotal,1,2)}" ></td>
+					<td th:text="${#numbers.formatDecimal(reservaR.cobro.valorIVA,1,2)}" ></td>
+					<td th:text="${#numbers.formatDecimal(reservaR.cobro.valorTotalPagar,1,2)}" ></td>
 					
 				<tr>
 			</tbody>

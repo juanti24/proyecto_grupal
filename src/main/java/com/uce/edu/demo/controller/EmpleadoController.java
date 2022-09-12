@@ -23,6 +23,7 @@ import com.uce.edu.demo.repository.modelo.Reserva;
 import com.uce.edu.demo.repository.modelo.Vehiculo;
 import com.uce.edu.demo.repository.modelo.VehiculoBuscar;
 import com.uce.edu.demo.service.IClienteService;
+import com.uce.edu.demo.service.IGestorClienteService;
 import com.uce.edu.demo.service.IGestorEmpleadoService;
 import com.uce.edu.demo.service.IVehiculoService;
 
@@ -34,12 +35,15 @@ public class EmpleadoController {
 
 	@Autowired
 	private IClienteService clienteService;
-	
+
 	@Autowired
 	private IVehiculoService vehiculoService;
-	
+
 	@Autowired
 	private IGestorEmpleadoService igestorEmpleadoService;
+
+	@Autowired
+	private IGestorClienteService igestorClienteService;
 
 	////// Registrar Cliente //////////////
 
@@ -60,7 +64,7 @@ public class EmpleadoController {
 		return "redirect:/empleados/clienteNuevo";
 	}
 
-	/////// (Buscar, eliminar, actualizar) cliente 
+	/////// (Buscar, eliminar, actualizar) cliente
 
 	/////////////////////////////////////////////////////////////////////////
 	@GetMapping("/editar/{clieCedula}")
@@ -90,7 +94,7 @@ public class EmpleadoController {
 		Cliente cliente = this.clienteService.buscarPorCedula(cedula);
 		Boolean validar = this.clienteService.verificarReserva(cliente.getId());
 
-		if (validar == true) {
+		if (validar == false) {
 
 			this.clienteService.eliminar(cliente.getId());
 
@@ -123,13 +127,14 @@ public class EmpleadoController {
 
 		return "empleado/todosClientes";
 	}
-	//Vista Ingresar Vehiculo
+	// Vista Ingresar Vehiculo
 
 	@GetMapping("vehiculoNuevo")
 	public String obtenerPaginaIngresoVehiculo(Vehiculo vehiculo) {
 		return "empleado/vehiculoNuevo";
 
 	}
+
 	@PostMapping("ingresarVehiculo")
 	public String ingresarVehiculo(Vehiculo vehiculo, BindingResult resut, Model modelo,
 			RedirectAttributes redirectAttributes) {
@@ -137,14 +142,14 @@ public class EmpleadoController {
 		redirectAttributes.addFlashAttribute("mensaje", "Vehiculo guardado");
 		return "redirect:/empleados/vehiculoNuevo";
 	}
-	
+
 /////// (Buscar, eliminar, actualizar) vehiculo 
 
 	/////////////////////////////////////////////////////////////////////////
 	@GetMapping("/editarVehiculo/{placa}")
 	public String editarVehiculo(@PathVariable("placa") String placa, Vehiculo vehiculo, Model modelo) {
 		Vehiculo vehi = this.vehiculoService.buscarPorPlaca(placa);
-		//LOG.info(clie.toString());
+		// LOG.info(clie.toString());
 		modelo.addAttribute("vehiculo", vehi);
 		return "empleado/vehiActualizar";
 	}
@@ -154,8 +159,8 @@ public class EmpleadoController {
 			RedirectAttributes redirectAttrs) {
 		Vehiculo vehiculo = this.vehiculoService.buscarPorPlaca(vehi.getPlaca());
 		vehi.setId(vehiculo.getId());
-		//clie.setTipoRegistro(cliente.getTipoRegistro());
-		//clie.setReserva(cliente.getReserva());
+		// clie.setTipoRegistro(cliente.getTipoRegistro());
+		// clie.setReserva(cliente.getReserva());
 		this.vehiculoService.actualizar(vehi);
 //		redirectAttrs.addFlashAttribute("mensaje", "Cliente cedula: " + clie.getCedula() + " editado correctamente")
 //				.addFlashAttribute("clase", "success");
@@ -166,10 +171,24 @@ public class EmpleadoController {
 	public String eliminarVehiculo(@PathVariable("placa") String placa, Model modelo,
 			RedirectAttributes redirectAttrs) {
 		Vehiculo vehiculo = this.vehiculoService.buscarPorPlaca(placa);
-		this.vehiculoService.borrar(vehiculo.getId());
+		Boolean validar = this.vehiculoService.verificarReserva(vehiculo.getId());
+
+		if (validar == false) {
+
+			this.vehiculoService.borrar(vehiculo.getId());
+
+		} else {
+
+			redirectAttrs.addFlashAttribute("mensaje2", "No se puede eliminar, tiene reservas activas")
+					.addFlashAttribute("clase2", "danger");
+		}
+
 
 		return "redirect:/empleados/todosVehiculo";
 	}
+	
+
+	
 
 	@GetMapping("/verVehiculo/{placa}")
 	public String verDatosVehiculo(@PathVariable("placa") String placa, Model modelo) {
@@ -185,17 +204,17 @@ public class EmpleadoController {
 		modelo.addAttribute("vehiculos", listaclientes1);
 		modelo.addAttribute("marca", marca);
 		LOG.info("marca: " + marca);
-	if (marca == null) {
-		modelo.addAttribute("vehiculos", listaClientes);
+		if (marca == null) {
+			modelo.addAttribute("vehiculos", listaClientes);
 		}
 
 		return "empleado/todosVehiculos";
 	}
-	
+
 	/////// Retirar Vehiculo Reservado
 
 	/////////////////////////////////////////////////////////////////////////
-	
+
 	@GetMapping("retirarVehiculoBuscar")
 	public String obtenerPaginaRetirarVehiculo(Reserva reserva) {
 		return "empleado/retirarVehiculo";
@@ -203,17 +222,89 @@ public class EmpleadoController {
 	}
 
 	@GetMapping("retirarVehiculoReservado")
-	public String retirarVehiculo(Model modelo,Reserva reserva) {
-		Reserva reservaR=this.igestorEmpleadoService.retirarVehiculoReservado(reserva.getNumero());
-		modelo.addAttribute("reservaR", reservaR); 
+	public String retirarVehiculo(Model modelo, Reserva reserva) {
+		Reserva reservaR = this.igestorEmpleadoService.retirarVehiculoReservado(reserva.getNumero());
+		modelo.addAttribute("reservaR", reservaR);
 		return "empleado/retirarVehiculoMostrar";
 
 	}
-	
+
 	// ********** retirar vehiculo sin reserva
-	
-		
-	
-	
+
+	// primer metodo para buscar vehiculos disponibles
+	@GetMapping("buscarVehiculos")
+	public String obtenerPaginaIngresoMarcaModelo(Vehiculo vehiculo) {
+		return "empleado/buscarVehiculoDispS";
+
+	}
+
+	// segundo metodo para buscar vehiculos disponibles
+	@GetMapping("buscar/disponibles")
+	public String mostrarVehiculosDisponibles(Vehiculo vehiculo, Model modelom) {
+		List<VehiculoBuscar> vehiculosBuscados = this.vehiculoService.buscarMarcaModelo(vehiculo.getMarca(),
+				vehiculo.getModelo());
+		modelom.addAttribute("vehiculos", vehiculosBuscados);
+		return "empleado/listaVehiculosDisponiblesS";
+
+	}
+
+	// primer metodo para reservar vehiculo
+	@GetMapping("reservar/buscarVehiculo")
+	public String obtenerPaginaBuscarVehiculo(Reserva reserva, Model modelo) {
+		modelo.addAttribute("reserva", reserva);
+		return "empleado/reservarBuscarVehiculoS";
+
+	}
+
+	// segundo metodo para reservar vehiculo
+	@GetMapping("verificarVehiculo")
+	public String verificarVehiculo(Model modelo, Reserva reserva, BindingResult result, RedirectAttributes redirect) {
+		Vehiculo vehiculoBuscar = this.vehiculoService.buscarPorPlaca(reserva.getVehiculo().getPlaca());
+		BigDecimal valorTotal = this.igestorClienteService.calcularPagoVehiculo(reserva.getVehiculo().getPlaca(),
+				reserva.getCliente().getCedula(), reserva.getFechaInicio(), reserva.getFechaFin());
+		// LOG.info("valor total "+ valorTotal);
+		Cobro cobro = new Cobro();
+		cobro.setValorTotalPagar(valorTotal);
+		reserva.setCobro(cobro);
+		modelo.addAttribute("reserva", reserva);
+
+		List<Reserva> reservasVehiculo = vehiculoBuscar.getReservas();
+		if (reservasVehiculo == null || reservasVehiculo.isEmpty()) {
+			String mensaje = "Vehiculo Disponible, Valor total a Pagar $" + valorTotal;
+			redirect.addFlashAttribute("mensaje", mensaje);
+			// LOG.info("Vehiculo Disponible, Valor total a Pagar "+valorTotal.toString());
+			return "empleado/pagarVehiculoS";
+		} else {
+			for (Reserva r : reservasVehiculo) {
+				if (this.igestorClienteService.verFechas(reserva.getFechaInicio(), reserva.getFechaFin(),
+						r.getFechaInicio(), r.getFechaFin())) {
+
+					redirect.addFlashAttribute("mensaje", "Fechas Solapadas, elija otras fechas");
+					// LOG.info("Fechas Solapadas, elija otras fechas");
+					return "empleado/reservarBuscarVehiculoS";
+				}
+			}
+			String mensaje = "Vehiculo Disponible, Valor total a Pagar $" + valorTotal;
+			redirect.addFlashAttribute("mensaje", mensaje);
+			// LOG.info("Vehiculo Disponible, Valor total a Pagar "+valorTotal.toString());
+			return "empleado/pagarVehiculoS";
+		}
+
+	}
+
+	// tercer metodo para reservar vehiculo
+	@PutMapping("reservar/pagarVehiculo")
+	public String pagarVehiculo(Model modelo, Reserva reserva) {
+		if (reserva.getCobro().getTarjeta().isEmpty()) {
+			reserva.getCobro().setTarjeta(null);
+		}
+		Reserva reservaGenerada = this.igestorClienteService.reservarVehiculo(reserva.getVehiculo().getPlaca(),
+				reserva.getCliente().getCedula(), reserva.getFechaInicio(), reserva.getFechaFin(),
+				reserva.getCobro().getTarjeta());
+		Reserva reservaR = this.igestorEmpleadoService.retirarVehiculoReservado(reservaGenerada.getNumero());
+		modelo.addAttribute("reservaR", reservaR);
+		return "empleado/retirarVehiculoMostrar";
+
+	}
 
 }

@@ -24,6 +24,10 @@ public interface IVehiculoRepository {
 	public Vehiculo buscarPorPlaca(String placa);
 	
 	public List<Vehiculo> buscarPorFechas(LocalDateTime fechaInicio, LocalDateTime fechaFinal);
+	
+	public boolean verificarReserva(Integer id);
+	
+	public List<Vehiculo> buscarFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
 
 }

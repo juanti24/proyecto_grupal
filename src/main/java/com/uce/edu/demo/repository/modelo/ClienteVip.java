@@ -85,10 +85,5 @@ public class ClienteVip {
 		this.valorTotal = valorTotal;
 	}
 
-	@Override
-	public String toString() {
-		return "ClienteVIP [apellido=" + apellido + ", nombre=" + nombre + ", cedula=" + cedula + ", genero=" + genero
-				+ ", tipoRegistro=" + tipoRegistro + ", valorIVA=" + valorIVA + ", valorTotal=" + valorTotal + "]";
-	}
 
 }
