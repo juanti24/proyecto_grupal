@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="../css/misprimerosestilos.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	
+	<div class="table table-dark table-striped">
+		<table>
+			<!--Para tablas dimanicas-->
+			<!--cabecera tabla-->
+			<thead>
+				<tr>
+					<th>Placa</th>
+					<th>Modelo</th>
+					<th>Estado</th>
+					<th>Fecha inicio</th>
+					<th>Fecha fin</th>
+					<th>Reservado por</th>
+					
+				</tr>
+			</thead>
+			<!--cuerpo tabla-->
+			<tbody>
+				<tr>
+
+					<td th:text="${reservaR.vehiculo.placa}"></td>
+					<td th:text="${reservaR.vehiculo.modelo}"></td>
+					<td th:text="${reservaR.vehiculo.estado}"></td>
+					<td th:text="${reservaR.fechaInicio}"></td>
+					<td th:text="${reservaR.fechaFin}"></td>
+					<td th:text="${reservaR.cliente.cedula}" ></td>
+					
+				<tr>
+			</tbody>
+		</table>
+	</div>
+</body>

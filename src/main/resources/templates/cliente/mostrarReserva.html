@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="../css/misprimerosestilos.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<h1>Reserva realizada</h1>
+	<div class="table table-dark table-striped">
+		<table>
+			<!--Para tablas dimanicas-->
+			<!--cabecera tabla-->
+			<thead>
+				<tr>
+					<th>Numero de reserva:</th>
+					<th>Placa del Vehiculo</th>
+					<th>Cedula Cliente</th>
+					<th>Fecha de inicio</th>
+					<th>Fecha fin</th>
+					<th>SubTotal</th>
+					<th>IVA</th>
+					<th>Valor total </th>
+
+				</tr>
+			</thead>
+			<!--cuerpo tabla-->
+			<tbody>
+				<tr>
+
+					<td th:text="${reservaGenerada.numero}"></td>
+					<td th:text="${reservaGenerada.vehiculo.placa}"></td>
+					<td th:text="${reservaGenerada.cliente.cedula}"></td>
+					<td th:text="${reservaGenerada.fechaInicio}"></td>
+					<td th:text="${reservaGenerada.fechaFin}"></td>
+					<td th:text="${#numbers.formatDecimal(reservaGenerada.cobro.valorSubtotal,1,2)}" ></td>
+					<td th:text="${#numbers.formatDecimal(reservaGenerada.cobro.valorIVA,1,2)}" ></td>
+					<td th:text="${#numbers.formatDecimal(reservaGenerada.cobro.valorTotalPagar,1,2)}" ></td>
+				<tr>
+			</tbody>
+		</table>
+	</div>
+</body>
